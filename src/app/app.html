@@ -3,17 +3,28 @@
     <ion-toolbar color="dark">
       <ion-title>CodeFlix - Menu</ion-title>
       <button ion-item menuClose color="dark" (click)="mySetting()">
-        <h2>{{user?.name}}</h2>
+        <ion-avatar item-left>
+          <img [src]="gravatarUrl">
+        </ion-avatar>
+        <h4>{{user?.name}}</h4>
       </button>
     </ion-toolbar>
   </ion-header>
 
   <ion-content>
-    <ion-list>
+    <ion-list *ngIf="!(user?.subscription_valid);else menu_subscriber">
       <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" color="dark">
         {{p.title}}
       </button>
     </ion-list>
+    <!-- Menu Assinante -->
+    <ng-template #menu_subscriber>
+      <ion-list>
+        <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" color="dark">
+          {{p.title}}
+        </button>
+      </ion-list>
+    </ng-template>
   </ion-content>
   <ion-footer>
       <button ion-button menuClose text-right large color="light" block clear icon-right (click)="logout()">

@@ -68,6 +68,16 @@ export class JwtClientProvider {
           return token;
         });
   }
+  refreshToken(){
+      return this.authHttp.post(`${ENV.API_URL}/refresh_token`,{})
+          .toPromise()
+          .then((response: Response) => {
+             let token = response.json().token;
+             this._token = token;
+             this.storage.set(ENV.TOKEN_NAME, this._token);
+             return token;
+          });
+  }
   revokeToken(): Promise<null> {
       let headers = new Headers();
       headers.set('Authorization', `Bearer ${this._token}`)

@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import {MenuController, NavController, NavParams, ToastController} from 'ionic-angular';
+import { MenuController, NavController, NavParams, ToastController } from 'ionic-angular';
 import 'rxjs/add/operator/toPromise';
 import { AuthProvider } from "../../providers/auth/auth";
-import { HomePage } from "../home/home";
 
 
 @Component({
@@ -33,9 +32,9 @@ export class LoginPage {
    }
    login() {
       this.auth.login(this.user)
-          .then(() => {
+          .then((user) => {
              //redirecionar
-              this.afterLogin();
+              this.afterLogin(user);
           }).catch(() => {
              let toast = this.toastCtrl.create({
                  message: 'Email e/ou senha inválidos.',
@@ -47,8 +46,8 @@ export class LoginPage {
       });
    }
     loginFacebook(){
-       this.auth.loginFacebook().then(() => {
-           this.afterLogin();
+       this.auth.loginFacebook().then((user) => {
+           this.afterLogin(user);
        }).catch(() => {
            let toast = this.toastCtrl.create({
                message: 'Erro ao realizar login no Facebook.',
@@ -59,8 +58,8 @@ export class LoginPage {
            toast.present();
        });
    }
-    afterLogin(){
+    afterLogin(user){
        this.menuCtrl.enable(true);
-       this.navCtrl.push(HomePage);
+       this.navCtrl.setRoot(user.subscription_valid ? 'HomeSubscriberPage' : 'HomePage');
     }
 }

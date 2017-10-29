@@ -1,5 +1,8 @@
 {
-  "name": "codeflix-app",
+  "name": "Code Flix",
   "app_id": "",
-  "type": "ionic-angular"
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }

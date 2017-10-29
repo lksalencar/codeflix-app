@@ -1,0 +1,65 @@
+<ion-header>
+
+  <ion-navbar color="dark">
+    <button ion-button menuToggle>
+       <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Últimos vídeos</ion-title>
+    <ion-buttons end>
+        <button ion-button icon-only (click)="canShowSearchBar = !canShowSearchBar">
+            <ion-icon name="search"></ion-icon>
+        </button>
+    </ion-buttons>
+  </ion-navbar>
+
+    <ion-toolbar color="light" *ngIf="canShowSearchBar">
+        <ion-searchbar [(ngModel)]="search"
+                       [formControl]="formSearchControl"></ion-searchbar>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content
+                pullingText="Puxe para atualizar"
+                refreshingText="Carregando..."
+        ></ion-refresher-content>
+    </ion-refresher>
+    <ion-grid>
+        <ion-row>
+            <ion-col col-12 col-sm-4 col-md-4
+                     *ngFor="let video of videos.data"
+                     navPush="VideoPlayPage"
+                     [navParams]="{video: video.id}">
+                <ion-card>
+                    <img [src]="video.thumb_small_url">
+                    <ion-card-content>
+                        <ion-card-title>{{video.title}}</ion-card-title>
+                    </ion-card-content>
+                    <ion-row>
+                        <ion-item>
+                            <ion-icon name="bookmark" item-left color="danger"></ion-icon>
+                            <ion-badge item-right color="danger" *ngFor="let category of video.categories_name.data.names">
+                                {{category}}
+                            </ion-badge>
+                        </ion-item>
+                        <ion-item *ngIf="video.serie_title">
+                            <ion-icon name="list-box" item-left color="secondary"></ion-icon>
+                            <ion-badge item-right color="secondary">
+                                {{video.serie_title.data.title}}
+                            </ion-badge>
+                        </ion-item>
+                        <ion-col>
+                            <ion-note>
+                                {{video.created_at | amTimeAgo}}
+                            </ion-note>
+                        </ion-col>
+                    </ion-row>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)" [enabled]="canMoreVideos">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+</ion-content>

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {BrowserXhr, Request, Response, ResponseOptions, XHRBackend, XHRConnection, XSRFStrategy} from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import { Observable } from "rxjs/Observable";
 import {appContainer} from "../../app/app.container";
@@ -31,7 +30,7 @@ export class DefaultXHRBackendProvider extends XHRBackend{//XmlHttpRequest
            return response;
         }).catch(responseError => {
             //verificar se o status 401 e redirecionar para o login
-          this.unauthenticated(responseError);
+          this.onResponseError(responseError);
           return Observable.throw(responseError);
         });
       return xhrConnection;
@@ -45,8 +44,19 @@ export class DefaultXHRBackendProvider extends XHRBackend{//XmlHttpRequest
         jwtClient.setToken(token);
       }
   }
-  unauthenticated(responseError: Response){
+  onResponseError(responseError: Response){
      let redirector = appContainer().get(RedirectorProvider);
+     switch (responseError.status){
+         case 401:
+             redirector.redirector();
+             break;
+         case 403:
+             let data = responseError.json();
+             let toHomePage = data.hasOwnProperty('error') &&
+             data.error == 'subscription_valid_not_found';
+             redirector.redirector(toHomePage ? 'HomePage' : 'LoginPage');
+             break;
+     }
       if(responseError.status === 401){
          redirector.redirector();
       }

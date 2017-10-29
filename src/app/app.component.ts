@@ -4,11 +4,12 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
+import { HomeSubscriberPage } from "../pages/home-subscriber/home-subscriber";
 import { LoginPage } from "../pages/login/login";
 import { MySettingsPage } from "../pages/my-settings/my-settings";
 import { AuthProvider } from "../providers/auth/auth";
 import { RedirectorProvider } from "../providers/redirector/redirector";
+import md5 from 'crypto-md5';
 
 
 @Component({
@@ -16,12 +17,12 @@ import { RedirectorProvider } from "../providers/redirector/redirector";
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
-
   rootPage: any = LoginPage;
 
+  pagesSubscriber: Array<{title: string, component: any}>;
   pages: Array<{title: string, component: any}>;
-
   user: any;
+  gravatarUrl = 'https://www.gravatar.com/avatar/nouser.jpg';
 
   constructor(public platform: Platform,
               public statusBar: StatusBar,
@@ -30,24 +31,33 @@ export class MyApp {
               public redirector: RedirectorProvider
   ) {
     this.initializeApp();
-    this.auth.user().then((user) => {
-       this.user = user;
-    });
     // used for an example of ngFor and navigation
-    this.pages = [
-      { title: 'Home', component: HomePage },
-      { title: 'List', component: ListPage }
+    this.pagesSubscriber = [
+          { title: 'Home', component: HomeSubscriberPage },
     ];
+      this.pages = [
+          { title: 'Assine Agora', component: HomePage },
+      ];
 
   }
 
   initializeApp() {
+    this.auth.userSubject().subscribe((user) => {
+      this.user = user;
+      this.gravatar();
+    });
     this.platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
+  }
+
+  gravatar(){
+    if (this.user){
+      this.gravatarUrl = `https://www.gravatar.com/avatar/${md5(this.user.email,'hex')}`
+    }
   }
 
   ngAfterViewInit(){
@@ -67,6 +77,6 @@ export class MyApp {
       });
   }
   mySetting(){
-     this.nav.setRoot('MySettingsPage');
+     this.nav.setRoot(MySettingsPage);
   }
 }

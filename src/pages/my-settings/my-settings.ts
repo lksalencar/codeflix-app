@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {NavController, NavParams, ToastController} from 'ionic-angular';
 import {Auth} from "../../decorators/auth.decorator";
-import {UserResourceProvider} from "../../providers/resource/user-resource";
+import {UserResourceProvider} from "../../providers/resource/user.resource";
 
 
 @Auth()
@@ -32,11 +32,11 @@ export class MySettingsPage {
     this.userResource
         .updatePassword(this.user)
         .then(() => {
-            toast.setMessage('Dados salvos com sucesso');
+            toast.setMessage('Dados salvos com sucesso.');
             toast.present();
         })
         .catch(() => {
-           toast.setMessage('Ops!! Dados inválidos tente novamente');
+           toast.setMessage('Ops!! Dados inválidos tente novamente.');
            toast.present();
         })
   }
